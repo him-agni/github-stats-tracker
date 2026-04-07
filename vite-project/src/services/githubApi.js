@@ -7,3 +7,15 @@ export async function fetchGitHubUser(username) {
 
   return response.json();
 }
+
+export async function fetchGitHubRepos(username) {
+  const response = await fetch(
+    `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`,
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch repositories");
+  }
+
+  return response.json();
+}
