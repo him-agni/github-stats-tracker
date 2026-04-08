@@ -8,6 +8,10 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
 } from "recharts";
 
 function ProfilePage() {
@@ -50,6 +54,20 @@ function ProfilePage() {
     stars: repo.stargazers_count,
   }));
 
+  const languageCounts =
+    repos?.reduce((acc, repo) => {
+      const language = repo.language || "Unknown";
+      acc[language] = (acc[language] || 0) + 1;
+      return acc;
+    }, {}) || {};
+
+  const languageChartData = Object.entries(languageCounts).map(
+    ([language, count]) => ({
+      name: language,
+      value: count,
+    }),
+  );
+
   if (isLoading) {
     return <p>Loading user profile...</p>;
   }
@@ -57,6 +75,16 @@ function ProfilePage() {
   if (isError) {
     return <p>Error: {error.message}</p>;
   }
+
+  const COLORS = [
+    "#2563eb",
+    "#16a34a",
+    "#f59e0b",
+    "#dc2626",
+    "#7c3aed",
+    "#0f766e",
+    "#9333ea",
+  ];
 
   return (
     <div>
@@ -109,6 +137,33 @@ function ProfilePage() {
         <p>No repositories available.</p>
       )}
       <hr />
+
+      <h2>Language Breakdown</h2>
+
+      <div style={{ width: "100%", height: 350 }}>
+        <ResponsiveContainer>
+          <PieChart>
+            <Pie
+              data={languageChartData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={100}
+              label
+            >
+              {languageChartData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
 
       <h2>Repositories</h2>
 

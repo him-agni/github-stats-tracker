@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSearchStore } from "../store/useSearchStore";
 
 function SearchPage() {
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
+  const addRecentSearch = useSearchStore((state) => state.addRecentSearch);
+  const recentSearches = useSearchStore((state) => state.recentSearches);
+  const clearRecentSearches = useSearchStore(
+    (state) => state.clearRecentSearches,
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -11,7 +17,7 @@ function SearchPage() {
     const trimmedUsername = username.trim();
 
     if (!trimmedUsername) return;
-
+    addRecentSearch(trimmedUsername);
     navigate(`/user/${trimmedUsername}`);
   };
 
@@ -28,7 +34,26 @@ function SearchPage() {
           onChange={(e) => setUsername(e.target.value)}
         />
         <button type="submit">Search</button>
+
+        <p>
+          <Link to="/compare">Go to Compare Page</Link>
+        </p>
       </form>
+      {recentSearches.length > 0 && (
+        <div>
+          <h2>Recent Searches</h2>
+          <ul>
+            {recentSearches.map((user) => (
+              <li key={user}>
+                <button onClick={() => navigate(`/user/${user}`)}>
+                  {user}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <button onClick={clearRecentSearches}>Clear Recent Searches</button>
     </div>
   );
 }
