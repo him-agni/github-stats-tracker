@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSearchStore } from "../store/useSearchStore";
 
 function SearchPage() {
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
+
   const addRecentSearch = useSearchStore((state) => state.addRecentSearch);
   const recentSearches = useSearchStore((state) => state.recentSearches);
   const clearRecentSearches = useSearchStore(
@@ -15,45 +16,101 @@ function SearchPage() {
     e.preventDefault();
 
     const trimmedUsername = username.trim();
-
     if (!trimmedUsername) return;
+
     addRecentSearch(trimmedUsername);
     navigate(`/user/${trimmedUsername}`);
+    setUsername("");
   };
 
   return (
-    <div>
-      <h1>GitHub Stats Tracker</h1>
-      <p>Search for a GitHub username</p>
+    <div className="app-shell">
+      <header className="site-header">
+        <div className="container site-header__inner">
+          <Link to="/" className="brand">
+            <span className="brand__mark">GH</span>
+            <span>GitHub Explorer</span>
+          </Link>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter GitHub username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <button type="submit">Search</button>
-
-        <p>
-          <Link to="/compare">Go to Compare Page</Link>
-        </p>
-      </form>
-      {recentSearches.length > 0 && (
-        <div>
-          <h2>Recent Searches</h2>
-          <ul>
-            {recentSearches.map((user) => (
-              <li key={user}>
-                <button onClick={() => navigate(`/user/${user}`)}>
-                  {user}
-                </button>
-              </li>
-            ))}
-          </ul>
+          <nav className="nav" aria-label="Main navigation">
+            <NavLink to="/" end>
+              Search
+            </NavLink>
+            <NavLink to="/compare">Compare</NavLink>
+          </nav>
         </div>
-      )}
-      <button onClick={clearRecentSearches}>Clear Recent Searches</button>
+      </header>
+
+      <main className="main">
+        <div className="container">
+          <section className="hero">
+            <p className="eyebrow">GitHub profile search</p>
+            <h1>Search developers and compare profiles.</h1>
+            <p>
+              Look up a GitHub user, review public profile details, and keep
+              track of recent searches.
+            </p>
+          </section>
+
+          <section className="panel panel--padded">
+            <form className="search-form" onSubmit={handleSubmit}>
+              <label className="sr-only" htmlFor="username">
+                GitHub username
+              </label>
+
+              <div className="search-row">
+                <input
+                  id="username"
+                  className="input"
+                  type="text"
+                  placeholder="Enter a GitHub username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+                <button className="button button--primary" type="submit">
+                  Search Profile
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section className="section-stack">
+            <div className="panel panel--padded">
+              <div className="section-head">
+                <h2>Recent searches</h2>
+                {recentSearches.length > 0 && (
+                  <button
+                    className="button button--secondary"
+                    type="button"
+                    onClick={clearRecentSearches}
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+
+              {recentSearches.length > 0 ? (
+                <div className="chip-list">
+                  {recentSearches.map((user) => (
+                    <button
+                      key={user}
+                      className="chip"
+                      type="button"
+                      onClick={() => navigate(`/user/${user}`)}
+                    >
+                      {user}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="muted-text">
+                  Your recent searches will appear here.
+                </p>
+              )}
+            </div>
+          </section>
+        </div>
+      </main>
     </div>
   );
 }
