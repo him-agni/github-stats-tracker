@@ -3,6 +3,8 @@
 A polished React app for searching GitHub users, comparing profiles, and exploring public developer data with a clean, responsive UI.
 <img width="1180" height="622" alt="image" src="https://github.com/user-attachments/assets/158b40d4-2d49-47fc-b216-8d545f5572e3" />
 
+Vercel link - https://github-stats-tracker-three.vercel.app/
+
 ## Overview
 
 GitHub Explorer is a frontend project built to practice modern React patterns and API-driven UI design. It lets users search for GitHub profiles, view user details, compare two profiles, and visualize profile data with charts.
